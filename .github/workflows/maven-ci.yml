@@ -18,5 +18,7 @@ jobs:
           distribution: temurin
       - name: Build with Maven
         run: mvn -B -ntp -DskipTests clean install
+        working-directory: ./backend
       - name: Run unit tests
         run: mvn test -DfailIfNoTests=false
+        working-directory: ./backend
