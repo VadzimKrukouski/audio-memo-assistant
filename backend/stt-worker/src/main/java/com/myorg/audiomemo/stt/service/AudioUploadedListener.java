@@ -2,6 +2,7 @@ package com.myorg.audiomemo.stt.service;
 
 import com.myorg.audiomemo.stt.client.SttClient;
 import com.myorg.audiomemo.stt.dto.AudioUploadedEvent;
+import com.myorg.audiomemo.stt.dto.SttResult;
 import com.myorg.audiomemo.stt.dto.TranscriptProducedEvent;
 import com.myorg.audiomemo.stt.entity.AudioTranscript;
 import com.myorg.audiomemo.stt.repository.AudioTranscriptRepository;
@@ -30,10 +31,10 @@ public class AudioUploadedListener {
     @KafkaListener(topics = "audio.uploaded")
     public void listen(AudioUploadedEvent event) {
         LOG.info("Received event: {}", event);
-        String transcript = sttClient.transcribe(event.audioId());
+        SttResult result = sttClient.transcribe(event.audioId());
 
-        repository.save(new AudioTranscript(event.audioId(), transcript));
+        repository.save(new AudioTranscript(event.audioId(), result.transcript(), result.rawJson()));
 
-        producer.send(new TranscriptProducedEvent(event.audioId(), transcript));
+        producer.send(new TranscriptProducedEvent(event.audioId(), result.transcript()));
     }
 }

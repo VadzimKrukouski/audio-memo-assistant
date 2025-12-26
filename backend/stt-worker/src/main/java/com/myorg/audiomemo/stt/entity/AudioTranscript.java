@@ -18,6 +18,9 @@ public class AudioTranscript {
     @Column(nullable = false, length = 10000)
     private String text;
 
+    @Column(name = "raw_response", columnDefinition = "TEXT")
+    private String rawResponse;
+
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -28,8 +31,9 @@ public class AudioTranscript {
         this.audioId = UUID.randomUUID();
     }
 
-    public AudioTranscript(UUID audioId, String text) {
+    public AudioTranscript(UUID audioId, String text, String rawResponse) {
         this.audioId = audioId;
         this.text = text;
+        this.rawResponse = rawResponse;
     }
 }

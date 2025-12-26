@@ -1,39 +1,36 @@
 server:
-  port: 1111
+  port: 8082
 
 spring:
+  profiles:
+    active: mock-llm
   datasource:
     url: jdbc:postgresql://localhost:5432/audio_assistant
     username: postgres
     password: postgres
-
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: true
-
   flyway:
     enabled: false
-
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: stt-worker
+      group-id: enrichment-service
       auto-offset-reset: earliest
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.value.default.type: com.myorg.audiomemo.stt.dto.AudioUploadedEvent
+        spring.json.value.default.type: com.myorg.audiomemo.enrichment.dto.TranscriptProducedEvent
         spring.json.trusted.packages: "*"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.add.type.headers: false
-
-logging:
-  level:
-    org.springframework.kafka: DEBUG
-    org.apache.kafka: DEBUG
+  ai:
+    openai:
+      api-key: ${{OPENAI_API_KEY}}
+      chat:
+        model: gpt-4.1-mini

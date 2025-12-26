@@ -1,0 +1,1 @@
+ALTER TABLE audio_transcript ADD COLUMN raw_response TEXT;
